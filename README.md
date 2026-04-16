@@ -104,6 +104,6 @@ git init
 git add .
 git commit -m "Initial commit - Simple Blog Django project"
 git branch -M main
-git remote add origin https://github.com/your-username/simple-blog.git
+git remote add origin https://github.com/ColdF1sh/Simple-Blog.git
 git push -u origin main
 ```
