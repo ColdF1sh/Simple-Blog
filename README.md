@@ -71,6 +71,25 @@ blog/
 8. Open the project in your browser:
    `http://127.0.0.1:8000/`
 
+## Automated Setup (Makefile)
+
+To reduce repetitive setup commands, this project also includes a `Makefile` with shortcuts for common Django tasks.  
+You can still use the manual setup steps above, but `make` provides a faster workflow during development.
+
+```bash
+make install
+make migrate
+make run
+```
+
+Additional available commands:
+
+```bash
+make test
+make createsuperuser
+make shell
+```
+
 ## Password Reset Notes
 
 - The email backend is configured to `console`, so reset emails are printed in the terminal during development.
