@@ -1,0 +1,23 @@
+[MASTER]
+load-plugins = pylint_django
+ignore = migrations
+persistent = no
+
+[MESSAGES CONTROL]
+disable =
+    missing-module-docstring,
+    missing-class-docstring,
+    missing-function-docstring,
+    too-few-public-methods,
+    no-member,
+    import-outside-toplevel,
+    unused-import,
+    imported-auth-user,
+    too-many-ancestors,
+    trailing-newlines
+
+[FORMAT]
+max-line-length = 100
+
+[TYPECHECK]
+django-settings-module = blog_project.settings

@@ -27,12 +27,18 @@ Users can register, log in, reset their password, create blog posts, view all po
 
 ```text
 blog/
+├── .github/
+│   └── workflows/
+│       └── ci.yml
 ├── accounts/
 ├── blog_project/
 ├── posts/
 ├── static/
 ├── templates/
+├── .flake8
+├── .pylintrc
 ├── .gitignore
+├── Makefile
 ├── manage.py
 ├── README.md
 └── requirements.txt
@@ -86,9 +92,36 @@ Additional available commands:
 
 ```bash
 make test
+make lint
+make quality
 make createsuperuser
 make shell
 ```
+
+## Local Quality Checks
+
+Run the automated tests locally with:
+
+```powershell
+python manage.py test
+```
+
+Run code style checks with flake8:
+
+```powershell
+python -m flake8 .
+```
+
+Run code quality analysis with pylint:
+
+```powershell
+python -m pylint accounts blog_project posts
+```
+
+## Continuous Integration
+
+GitHub Actions runs the CI workflow automatically on every push to `main` and on every pull request targeting `main`.  
+You can see the results in your GitHub repository under the `Actions` tab, where each workflow run shows whether tests, flake8, and pylint passed or failed.
 
 ## Password Reset Notes
 

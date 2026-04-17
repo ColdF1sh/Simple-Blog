@@ -10,11 +10,13 @@ User = get_user_model()
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
+    _ = sender
     if created:
         Profile.objects.create(user=instance)
 
 
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
+    _ = sender
     Profile.objects.get_or_create(user=instance)
     instance.profile.save()

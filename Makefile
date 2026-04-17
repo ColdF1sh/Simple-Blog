@@ -11,6 +11,12 @@ run:
 test:
 	python manage.py test
 
+lint:
+	python -m flake8 .
+
+quality:
+	python -m pylint accounts blog_project posts
+
 createsuperuser:
 	python manage.py createsuperuser
 
