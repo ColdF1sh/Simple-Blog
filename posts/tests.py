@@ -1,3 +1,5 @@
+from unittest.mock import ANY, patch
+
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
@@ -23,6 +25,12 @@ class PostModelTests(TestCase):
 
     def test_post_string_representation(self):
         self.assertEqual(str(self.post), "Model Test Post")
+
+    def test_post_fields_are_saved_correctly(self):
+        self.assertEqual(self.post.title, "Model Test Post")
+        self.assertEqual(self.post.content, "Model test content.")
+        self.assertEqual(self.post.author, self.user)
+        self.assertEqual(self.user.posts.count(), 1)
 
     def test_post_absolute_url(self):
         self.assertEqual(
@@ -52,6 +60,12 @@ class CommentModelTests(TestCase):
     def test_comment_string_representation(self):
         expected = f"Comment by {self.user.username} on {self.post.title}"
         self.assertEqual(str(self.comment), expected)
+
+    def test_comment_fields_and_relations_are_saved_correctly(self):
+        self.assertEqual(self.comment.post, self.post)
+        self.assertEqual(self.comment.author, self.user)
+        self.assertEqual(self.comment.content, "Nice article!")
+        self.assertEqual(self.post.comments.count(), 1)
 
 
 class PostViewTests(TestCase):
@@ -87,15 +101,17 @@ class PostViewTests(TestCase):
     def test_authenticated_user_can_create_post(self):
         self.client.login(username="writer", password="StrongPass123")
 
-        response = self.client.post(
-            reverse("post_create"),
-            {"title": "Created in test", "content": "New post content"},
-        )
+        with patch("posts.views.messages.success") as mock_success:
+            response = self.client.post(
+                reverse("post_create"),
+                {"title": "Created in test", "content": "New post content"},
+            )
 
         created_post = Post.objects.get(title="Created in test")
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse("post_detail", kwargs={"pk": created_post.pk}))
         self.assertEqual(created_post.author, self.user)
+        mock_success.assert_called_once_with(ANY, "Post created successfully.")
 
     def test_unauthenticated_user_cannot_create_post(self):
         response = self.client.post(
@@ -113,6 +129,20 @@ class PostViewTests(TestCase):
         response = self.client.get(reverse("post_update", kwargs={"pk": self.post.pk}))
 
         self.assertEqual(response.status_code, 403)
+
+    def test_author_can_edit_own_post(self):
+        self.client.login(username="writer", password="StrongPass123")
+
+        response = self.client.post(
+            reverse("post_update", kwargs={"pk": self.post.pk}),
+            {"title": "Updated Title", "content": "Updated content"},
+        )
+
+        self.post.refresh_from_db()
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse("post_detail", kwargs={"pk": self.post.pk}))
+        self.assertEqual(self.post.title, "Updated Title")
+        self.assertEqual(self.post.content, "Updated content")
 
     def test_authenticated_user_can_add_comment(self):
         self.client.login(username="reader", password="StrongPass123")

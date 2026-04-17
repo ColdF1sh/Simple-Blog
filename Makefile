@@ -11,6 +11,13 @@ run:
 test:
 	python manage.py test
 
+coverage:
+	python -m coverage run manage.py test
+	python -m coverage report
+
+coverage-html:
+	python -m coverage html
+
 lint:
 	python -m flake8 .
 
