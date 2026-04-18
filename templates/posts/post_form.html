@@ -8,10 +8,10 @@
                 <h1 class="h3 mb-4">
                     {% if form.instance.pk %}Edit Post{% else %}Create Post{% endif %}
                 </h1>
-                <form method="post">
+                <form method="post" id="post-form">
                     {% csrf_token %}
                     {% include "includes/form_fields.html" with form=form %}
-                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="submit" class="btn btn-primary" id="post-submit-button">Save</button>
                     <a href="{% url 'home' %}" class="btn btn-outline-secondary">Cancel</a>
                 </form>
             </div>

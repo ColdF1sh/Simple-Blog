@@ -3,7 +3,7 @@
 {% block content %}
 <div class="card shadow-sm mb-4">
     <div class="card-body">
-        <h1 class="card-title">{{ post.title }}</h1>
+        <h1 class="card-title" id="post-title">{{ post.title }}</h1>
         <p class="text-muted small">
             By {{ post.author.username }} on {{ post.created_at|date:"M d, Y H:i" }}
             {% if post.updated_at != post.created_at %}
@@ -42,10 +42,10 @@
     <div class="card-body">
         <h2 class="h4 mb-3">Add a Comment</h2>
         {% if user.is_authenticated %}
-        <form method="post" action="{% url 'add_comment' post.pk %}">
+        <form method="post" action="{% url 'add_comment' post.pk %}" id="comment-form">
             {% csrf_token %}
             {% include "includes/form_fields.html" with form=comment_form %}
-            <button type="submit" class="btn btn-primary">Post Comment</button>
+            <button type="submit" class="btn btn-primary" id="comment-submit-button">Post Comment</button>
         </form>
         {% else %}
         <p class="mb-0">

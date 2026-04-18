@@ -1,4 +1,10 @@
 # =========================
+# Selenium screenshots
+# =========================
+tests/selenium/screenshots/
+!tests/selenium/screenshots/.gitkeep
+
+# =========================
 # Python
 # =========================
 __pycache__/

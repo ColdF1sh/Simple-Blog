@@ -34,28 +34,28 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'home' %}">Home</a>
+                        <a class="nav-link" href="{% url 'home' %}" id="nav-home-link">Home</a>
                     </li>
                     {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'post_create' %}">New Post</a>
+                        <a class="nav-link" href="{% url 'post_create' %}" id="nav-new-post-link">New Post</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'profile' %}">Profile</a>
+                        <a class="nav-link" href="{% url 'profile' %}" id="nav-profile-link">Profile</a>
                     </li>
                     {% endif %}
                 </ul>
 
                 <div class="d-flex align-items-center gap-2">
                     {% if user.is_authenticated %}
-                    <span class="text-white-50 small">Hello, {{ user.username }}</span>
+                    <span class="text-white-50 small" id="nav-user-greeting">Hello, {{ user.username }}</span>
                     <form method="post" action="{% url 'logout' %}" class="m-0">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-outline-light btn-sm">Logout</button>
+                        <button type="submit" class="btn btn-outline-light btn-sm" id="nav-logout-button">Logout</button>
                     </form>
                     {% else %}
-                    <a href="{% url 'login' %}" class="btn btn-outline-light btn-sm">Login</a>
-                    <a href="{% url 'register' %}" class="btn btn-warning btn-sm">Register</a>
+                    <a href="{% url 'login' %}" class="btn btn-outline-light btn-sm" id="nav-login-link">Login</a>
+                    <a href="{% url 'register' %}" class="btn btn-warning btn-sm" id="nav-register-link">Register</a>
                     {% endif %}
                 </div>
             </div>
