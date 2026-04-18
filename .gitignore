@@ -1,10 +1,48 @@
+# =========================
+# Python
+# =========================
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+.venv/
+env/
+venv/
+
+# =========================
+# Django
+# =========================
 db.sqlite3
+*.log
+
+# =========================
+# Testing / Coverage
+# =========================
 .coverage
 .coverage.*
 htmlcov/
-.venv/
-env/
+
+# pytest / unittest cache
+.pytest_cache/
+
+# =========================
+# Robot Framework (Lab 7)
+# =========================
+tests/keyword/results/
+output.xml
+log.html
+report.html
+
+# =========================
+# IDE / Editor
+# =========================
 .idea/
 .vscode/
+
+# =========================
+# OS files
+# =========================
+.DS_Store
+Thumbs.db
