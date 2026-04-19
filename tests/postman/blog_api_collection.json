@@ -1,0 +1,387 @@
+{
+  "info": {
+    "_postman_id": "0c5c3447-d7d1-4b76-a865-b99dddeabc11",
+    "name": "Simple Blog API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth - Get Token",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"{{username}}\",\n  \"password\": \"{{password}}\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/auth/token/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "token"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "const jsonData = pm.response.json();",
+              "pm.test('Token is returned', function () {",
+              "    pm.expect(jsonData.token).to.be.a('string').and.not.empty;",
+              "});",
+              "pm.environment.set('token', jsonData.token);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Posts - List Posts",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/posts/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "posts"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "const jsonData = pm.response.json();",
+              "pm.test('Response is an array', function () {",
+              "    pm.expect(jsonData).to.be.an('array');",
+              "});",
+              "if (jsonData.length > 0) {",
+              "    pm.test('Post contains expected fields', function () {",
+              "        pm.expect(jsonData[0]).to.have.property('id');",
+              "        pm.expect(jsonData[0]).to.have.property('title');",
+              "        pm.expect(jsonData[0]).to.have.property('author');",
+              "    });",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Posts - Unauthorized Create Rejected",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Unauthorized Post\",\n  \"content\": \"This request should be rejected.\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/posts/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "posts"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Unauthorized create is rejected', function () {",
+              "    pm.expect(pm.response.code).to.be.oneOf([401, 403]);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Posts - Create Post",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Token {{token}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Postman API Test Post\",\n  \"content\": \"Created from Postman for Lab 10.\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/posts/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "posts"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 201', function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "const jsonData = pm.response.json();",
+              "pm.test('Created post has expected fields', function () {",
+              "    pm.expect(jsonData.id).to.be.a('number');",
+              "    pm.expect(jsonData.title).to.eql('Postman API Test Post');",
+              "    pm.expect(jsonData.author).to.eql(pm.environment.get('username'));",
+              "});",
+              "pm.environment.set('post_id', jsonData.id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Posts - Retrieve Post",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/posts/{{post_id}}/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "posts",
+            "{{post_id}}"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "const jsonData = pm.response.json();",
+              "pm.test('Retrieved post matches created post', function () {",
+              "    pm.expect(jsonData.id).to.eql(Number(pm.environment.get('post_id')));",
+              "    pm.expect(jsonData.title).to.eql('Postman API Test Post');",
+              "    pm.expect(jsonData).to.have.property('comments_count');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Comments - List Comments For Post",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/posts/{{post_id}}/comments/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "posts",
+            "{{post_id}}",
+            "comments"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "const jsonData = pm.response.json();",
+              "pm.test('Comments response is an array', function () {",
+              "    pm.expect(jsonData).to.be.an('array');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Comments - Create Comment",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Token {{token}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"content\": \"Postman API comment\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/posts/{{post_id}}/comments/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "posts",
+            "{{post_id}}",
+            "comments"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 201', function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "const jsonData = pm.response.json();",
+              "pm.test('Created comment has expected fields', function () {",
+              "    pm.expect(jsonData.id).to.be.a('number');",
+              "    pm.expect(jsonData.content).to.eql('Postman API comment');",
+              "    pm.expect(jsonData.author).to.eql(pm.environment.get('username'));",
+              "});",
+              "pm.environment.set('comment_id', jsonData.id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Comments - Retrieve Comment",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/comments/{{comment_id}}/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "comments",
+            "{{comment_id}}"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "const jsonData = pm.response.json();",
+              "pm.test('Retrieved comment matches created comment', function () {",
+              "    pm.expect(jsonData.id).to.eql(Number(pm.environment.get('comment_id')));",
+              "    pm.expect(jsonData.content).to.eql('Postman API comment');",
+              "    pm.expect(jsonData.post).to.eql(Number(pm.environment.get('post_id')));",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Profile - Get My Profile",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Token {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/profile/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "profile"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "const jsonData = pm.response.json();",
+              "pm.test('Profile belongs to authenticated user', function () {",
+              "    pm.expect(jsonData.username).to.eql(pm.environment.get('username'));",
+              "    pm.expect(jsonData).to.have.property('bio');",
+              "    pm.expect(jsonData).to.have.property('posts_count');",
+              "});"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
