@@ -3,6 +3,7 @@
 # =========================
 tests/selenium/screenshots/
 !tests/selenium/screenshots/.gitkeep
+features/reports/
 
 # =========================
 # Python
